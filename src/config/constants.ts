@@ -28,4 +28,5 @@ export const API_ENDPOINTS = {
   TOP_10: '/scores/top10/groupA',
   STATISTICS: '/statistics/',
   LOGIN: '/auth/login',
+  REFRESH: '/auth/refresh',
 };
