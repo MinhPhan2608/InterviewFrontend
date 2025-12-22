@@ -11,9 +11,11 @@ const calculateTotal = (math: number | null, physics: number | null, chemistry: 
 };
 
 const DashboardPage = () => {
-  const { statistics, fetchStatistics } = useStatistics();
-  const { students, fetchTop10 } = useTop10GroupA();
+  const { statistics, isLoading: statsLoading, fetchStatistics } = useStatistics();
+  const { students, isLoading: studentsLoading, fetchTop10 } = useTop10GroupA();
   const { t } = useLanguage();
+
+  const isLoading = statsLoading || studentsLoading;
 
   useEffect(() => {
     fetchStatistics();
@@ -67,19 +69,34 @@ const DashboardPage = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-[var(--color-bg-secondary)] rounded-xl shadow-sm p-5 border border-[var(--color-border)]">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-[var(--color-primary)]/10 rounded-lg">
-              <Users className="w-6 h-6 text-[var(--color-primary)]" />
+        {isLoading ? (
+          // Skeleton loading
+          Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="bg-[var(--color-bg-secondary)] rounded-xl shadow-sm p-5 border border-[var(--color-border)] animate-pulse">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-[var(--color-bg-tertiary)] rounded-lg"></div>
+                <div className="flex-1">
+                  <div className="h-4 bg-[var(--color-bg-tertiary)] rounded w-20 mb-2"></div>
+                  <div className="h-8 bg-[var(--color-bg-tertiary)] rounded w-16"></div>
+                </div>
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-[var(--color-text-secondary)]">{t('totalEntries')}</p>
-              <p className="text-2xl font-bold text-[var(--color-text-primary)]">
-                {totalsBySubject.total.toLocaleString()}
-              </p>
+          ))
+        ) : (
+          <>
+            <div className="bg-[var(--color-bg-secondary)] rounded-xl shadow-sm p-5 border border-[var(--color-border)]">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-[var(--color-primary)]/10 rounded-lg">
+                  <Users className="w-6 h-6 text-[var(--color-primary)]" />
+                </div>
+                <div>
+                  <p className="text-sm text-[var(--color-text-secondary)]">{t('totalEntries')}</p>
+                  <p className="text-2xl font-bold text-[var(--color-text-primary)]">
+                    {totalsBySubject.total.toLocaleString()}
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
         <div className="bg-[var(--color-bg-secondary)] rounded-xl shadow-sm p-5 border border-[var(--color-border)]">
           <div className="flex items-center gap-4">
@@ -142,7 +159,21 @@ const DashboardPage = () => {
       </div>
 
       {/* Top 3 Preview */}
-      {students.length > 0 && (
+      {isLoading ? (
+        <div className="bg-[var(--color-bg-secondary)] rounded-xl shadow-sm p-6 border border-[var(--color-border)] animate-pulse">
+          <div className="h-6 bg-[var(--color-bg-tertiary)] rounded w-32 mb-4"></div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="bg-[var(--color-bg-tertiary)] rounded-lg p-4">
+                <div className="h-4 bg-[var(--color-border)] rounded w-8 mb-2"></div>
+                <div className="h-5 bg-[var(--color-border)] rounded w-24 mb-2"></div>
+                <div className="h-8 bg-[var(--color-border)] rounded w-16 mb-1"></div>
+                <div className="h-3 bg-[var(--color-border)] rounded w-20"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : students.length > 0 && (
         <div className="bg-[var(--color-bg-secondary)] rounded-xl shadow-sm p-6 border border-[var(--color-border)]">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-[var(--color-text-primary)] flex items-center gap-2">
