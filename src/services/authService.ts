@@ -11,32 +11,32 @@ export const authService = {
     return response.data.data;
   },
 
-  // Logout - clear local storage
+  // clear local storage when logout
   logout: (): void => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('user');
   },
 
-  // Check if user is authenticated
+  // check if user is authenticated
   isAuthenticated: (): boolean => {
     const token = localStorage.getItem('access_token');
     return !!token;
   },
 
-  // Get stored token
+  // get stored token
   getToken: (): string | null => {
     return localStorage.getItem('access_token');
   },
 
-  // Store auth data
+  // store auth data
   setAuthData: (accessToken: string, refreshToken: string, username: string): void => {
     localStorage.setItem('access_token', accessToken);
     localStorage.setItem('refresh_token', refreshToken);
     localStorage.setItem('user', JSON.stringify({ username }));
   },
 
-  // Get stored user
+  // get stored user
   getUser: (): { username: string } | null => {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;

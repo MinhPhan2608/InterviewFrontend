@@ -1,6 +1,6 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 
-// Create axios instance with base configuration
+//Axios instance with base URL
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080',
   headers: {
@@ -9,7 +9,7 @@ const apiClient = axios.create({
   timeout: 10000,
 });
 
-// Request interceptor to add auth token
+// interceptor to handle auth token
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem('access_token');
@@ -23,12 +23,11 @@ apiClient.interceptors.request.use(
   }
 );
 
-// Response interceptor to handle errors
+// handle errors 
 apiClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid, redirect to login
       localStorage.removeItem('access_token');
       localStorage.removeItem('user');
       window.location.href = '/login';
