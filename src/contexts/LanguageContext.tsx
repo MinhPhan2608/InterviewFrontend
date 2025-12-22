@@ -39,14 +39,14 @@ const translations = {
     demoCredentials: 'Demo Credentials:',
     
     // Dashboard
-    welcomeToDashboard: 'Welcome to G-Scores Management System',
+    welcomeToDashboard: 'G-Scores Scores Management',
     totalEntries: 'Total Entries',
     excellent: 'Excellent (≥8)',
     good: 'Good (6-8)',
     average: 'Average (4-6)',
     poor: 'Poor (<4)',
     topScoreGroupA: 'Top Score (Group A)',
-    viewAll: 'View all →',
+    viewAll: 'View all',
     top3Students: 'Top 3 Group A Students',
     totalScore: 'Total Score',
     
@@ -143,14 +143,14 @@ const translations = {
     demoCredentials: 'Tài khoản demo:',
     
     // Dashboard
-    welcomeToDashboard: 'Chào mừng đến với hệ thống quản lý G-Scores',
+    welcomeToDashboard: 'Hệ thống quản lý điểm G-Scores',
     totalEntries: 'Tổng số bài thi',
     excellent: 'Giỏi (≥8)',
     good: 'Khá (6-8)',
     average: 'Trung bình (4-6)',
     poor: 'Yếu (<4)',
     topScoreGroupA: 'Điểm cao nhất (Khối A)',
-    viewAll: 'Xem tất cả →',
+    viewAll: 'Xem tất cả',
     top3Students: 'Top 3 Thí sinh Khối A',
     totalScore: 'Tổng điểm',
     

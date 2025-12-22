@@ -21,6 +21,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // Check for existing auth on mount
   useEffect(() => {
@@ -51,8 +52,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const logout = () => {
-    authService.logout();
-    setUser(null);
+    setIsLoggingOut(true);
+    // Add fade out animation before clearing auth
+    setTimeout(() => {
+      authService.logout();
+      setUser(null);
+      setIsLoggingOut(false);
+    }, 300);
   };
 
   return (
@@ -60,13 +66,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       value={{
         user,
         isAuthenticated: !!user,
-        isLoading,
+        isLoading: isLoading || isLoggingOut,
         login,
         logout,
         error,
       }}
     >
-      {children}
+      <div className={isLoggingOut ? 'animate-[fadeOut_0.3s_ease-in]' : ''}>
+        {children}
+      </div>
     </AuthContext.Provider>
   );
 };

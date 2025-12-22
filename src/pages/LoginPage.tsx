@@ -70,12 +70,11 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-primary)] flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-[var(--color-primary)] flex items-start justify-center p-4 pt-20">
+      <div className="w-full max-w-md animate-[fadeIn_0.5s_ease-out]">
         {/* Logo/Title */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">G-Scores</h1>
-          <p className="text-white/80">Vietnamese High School Exam Score Lookup</p>
         </div>
 
         {/* Login Form Card */}
@@ -189,11 +188,6 @@ const LoginPage = () => {
             </p>
           </div>
         </div>
-
-        {/* Footer */}
-        <p className="text-center text-white/70 text-sm mt-6">
-          © 2024 G-Scores. Golden Owl Solutions.
-        </p>
       </div>
     </div>
   );
