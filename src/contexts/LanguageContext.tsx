@@ -224,11 +224,7 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-interface LanguageProviderProps {
-  children: ReactNode;
-}
-
-export const LanguageProvider = ({ children }: LanguageProviderProps) => {
+export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [language, setLanguageState] = useState<Language>(() => {
     const stored = localStorage.getItem('language');
     return (stored as Language) || 'vi';

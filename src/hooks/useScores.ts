@@ -1,16 +1,25 @@
 import { useState, useCallback } from 'react';
 import { scoreService } from '@/services';
 import type { StudentScore, SubjectStatistics } from '@/types';
+import { getCached, setCache } from '@/utils/cache';
+import { CACHE_TIME, EXAM_CONFIG } from '@/config/constants';
 
-// Hook for searching scores by registration number
+// Search for a student's scores
 export const useScoreSearch = () => {
   const [score, setScore] = useState<StudentScore | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const searchScore = useCallback(async (regNum: string) => {
-    if (!regNum.trim()) {
+    const trimmed = regNum.trim();
+    
+    // Validation in UI before sending request
+    if (!trimmed) {
       setError('Please enter a registration number');
+      return;
+    }
+    if (trimmed.length !== EXAM_CONFIG.REG_NUMBER_LENGTH || !/^\d+$/.test(trimmed)) {
+      setError(`Registration number must be exactly ${EXAM_CONFIG.REG_NUMBER_LENGTH} digits`);
       return;
     }
 
@@ -19,10 +28,9 @@ export const useScoreSearch = () => {
     setScore(null);
 
     try {
-      const result = await scoreService.getScoreByRegNumber(regNum);
+      const result = await scoreService.getScoreByRegNumber(trimmed);
       setScore(result);
     } catch (err: unknown) {
-      // Extract message from API response
       if (err && typeof err === 'object' && 'response' in err) {
         const axiosError = err as { response?: { data?: { message?: string } } };
         setError(axiosError.response?.data?.message || 'Failed to fetch score. Please try again.');
@@ -44,70 +52,74 @@ export const useScoreSearch = () => {
   return { score, isLoading, error, searchScore, clearScore };
 };
 
-// Hook for getting top 10 Group A students
+// Top performers for Group A (math, physics, chemistry)
+// Cached
 export const useTop10GroupA = () => {
   const [students, setStudents] = useState<StudentScore[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [lastFetched, setLastFetched] = useState<number | null>(null);
+  const [err, setErr] = useState<string | null>(null);
 
   const fetchTop10 = useCallback(async (force = false) => {
-    // Cache for 3 minutes
-    const CACHE_DURATION = 3 * 60 * 1000;
-    const now = Date.now();
-    
-    if (!force && lastFetched && (now - lastFetched < CACHE_DURATION)) {
-      return; // Use cached data
+    if (!force) {
+      const cached = getCached<StudentScore[]>('top10', CACHE_TIME.LEADERBOARD);
+      if (cached) {
+        setStudents(cached);
+        return;
+      }
     }
 
     setIsLoading(true);
-    setError(null);
+    setErr(null);
 
     try {
       const result = await scoreService.getTop10GroupA();
       setStudents(result);
-      setLastFetched(now);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch top 10 students.';
-      setError(errorMessage);
+      setCache('top10', result);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Failed to fetch top 10 students.';
+      setErr(msg);
     } finally {
       setIsLoading(false);
     }
-  }, [lastFetched]);
+  }, []);
 
-  return { students, isLoading, error, fetchTop10 };
+  return { students, isLoading, error: err, fetchTop10 };
 };
 
-// Hook for getting statistics
+// Overall statistics - separate from individual searches
+// Cache
 export const useStatistics = () => {
   const [statistics, setStatistics] = useState<SubjectStatistics[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [lastFetched, setLastFetched] = useState<number | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const fetchStatistics = useCallback(async (force = false) => {
-    // Cache for 5 minutes
-    const CACHE_DURATION = 5 * 60 * 1000;
-    const now = Date.now();
-    
-    if (!force && lastFetched && (now - lastFetched < CACHE_DURATION)) {
-      return; // Use cached data
+    if (!force) {
+      const cached = getCached<SubjectStatistics[]>('stats', CACHE_TIME.STATS);
+      if (cached) {
+        setStatistics(cached);
+        return;
+      }
     }
 
     setIsLoading(true);
-    setError(null);
+    setErrorMsg(null);
 
     try {
       const result = await scoreService.getStatistics();
       setStatistics(result);
-      setLastFetched(now);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch statistics.';
-      setError(errorMessage);
+      setCache('stats', result);
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrorMsg(error.message);
+      } else {
+        setErrorMsg('Failed to fetch statistics.');
+      }
     } finally {
       setIsLoading(false);
     }
-  }, [lastFetched]);
+  }, []);
 
-  return { statistics, isLoading, error, fetchStatistics };
+  return { statistics, isLoading, error: errorMsg, fetchStatistics };
 };
+

@@ -1,46 +1,62 @@
 import apiClient from './apiClient';
 import type { LoginCredentials, LoginData, ApiResponse } from '@/types';
+import { API_ENDPOINTS } from '@/config/constants';
+
+// Keys for storing auth data - prefixed to avoid collisions
+const STORAGE_KEYS = {
+  ACCESS: 'gscores_token',
+  REFRESH: 'gscores_refresh',
+  USER: 'gscores_user',
+};
 
 export const authService = {
-  // Login with username and password
   login: async (credentials: LoginCredentials): Promise<LoginData> => {
-    const response = await apiClient.post<ApiResponse<LoginData>>('/auth/login', credentials);
+    if (!credentials.username?.trim() || !credentials.password?.trim()) {
+      throw new Error('Username and password are required');
+    }
+
+    const response = await apiClient.post<ApiResponse<LoginData>>(API_ENDPOINTS.LOGIN, credentials);
+    
     if (!response.data.success) {
       throw new Error(response.data.message || 'Login failed');
     }
+    
     return response.data.data;
   },
 
-  // clear local storage when logout
   logout: (): void => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('user');
+    localStorage.removeItem(STORAGE_KEYS.ACCESS);
+    localStorage.removeItem(STORAGE_KEYS.REFRESH);
+    localStorage.removeItem(STORAGE_KEYS.USER);
   },
 
-  // check if user is authenticated
   isAuthenticated: (): boolean => {
-    const token = localStorage.getItem('access_token');
-    return !!token;
+    return !!localStorage.getItem(STORAGE_KEYS.ACCESS);
   },
 
-  // get stored token
   getToken: (): string | null => {
-    return localStorage.getItem('access_token');
+    return localStorage.getItem(STORAGE_KEYS.ACCESS);
   },
 
-  // store auth data
+  // Save tokens after successful login
   setAuthData: (accessToken: string, refreshToken: string, username: string): void => {
-    localStorage.setItem('access_token', accessToken);
-    localStorage.setItem('refresh_token', refreshToken);
-    localStorage.setItem('user', JSON.stringify({ username }));
+    localStorage.setItem(STORAGE_KEYS.ACCESS, accessToken);
+    localStorage.setItem(STORAGE_KEYS.REFRESH, refreshToken);
+    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify({ username }));
   },
 
-  // get stored user
   getUser: (): { username: string } | null => {
-    const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
+    const user = localStorage.getItem(STORAGE_KEYS.USER);
+    if (!user) return null;
+    
+    try {
+      return JSON.parse(user);
+    } catch {
+      localStorage.removeItem(STORAGE_KEYS.USER);
+      return null;
+    }
   },
 };
 
 export default authService;
+

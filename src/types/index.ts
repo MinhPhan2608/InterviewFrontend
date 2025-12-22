@@ -1,4 +1,3 @@
-
 export interface ApiResponse<T> {
   success: boolean;
   code: number;
@@ -30,7 +29,7 @@ export interface StudentScore {
   biology: number | null;
   history: number | null;
   geography: number | null;
-  gdcd: number | null;
+  gdcd: number | null; // civics education
   languageCode: string | null;
 }
 
@@ -46,3 +45,4 @@ export interface ApiError {
   message: string;
   statusCode: number;
 }
+

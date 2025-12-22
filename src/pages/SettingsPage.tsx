@@ -1,15 +1,16 @@
 import { Settings as SettingsIcon, User, Globe, Sun, Moon, Monitor } from 'lucide-react';
 import { useAuth, useTheme, useLanguage } from '@/contexts';
+import { useMemo } from 'react';
 
 const SettingsPage = () => {
   const { user } = useAuth();
   const { theme, setTheme } = useTheme();
   const { language, setLanguage, t } = useLanguage();
 
-  const themeOptions = [
-    { value: 'light', label: t('lightMode'), icon: Sun },
-    { value: 'dark', label: t('darkMode'), icon: Moon },
-  ] as const;
+  const themeOpts = useMemo(() => [
+    { value: 'light' as const, label: t('lightMode') || 'Light', icon: Sun },
+    { value: 'dark' as const, label: t('darkMode') || 'Dark', icon: Moon },
+  ], [t]);
 
   return (
     <div className="space-y-6">
@@ -48,23 +49,23 @@ const SettingsPage = () => {
             {t('appearance')}
           </h2>
           <div className="space-y-3">
-            <p className="text-sm text-[var(--color-text-secondary)] mb-3">{t('themeSettings')}</p>
+            <p className="text-sm text-[var(--color-text-secondary)] mb-3">{t('themeSettings') || 'Theme'}</p>
             <div className="grid grid-cols-2 gap-3">
-              {themeOptions.map((option) => {
-                const Icon = option.icon;
-                const isActive = theme === option.value;
+              {themeOpts.map((opt) => {
+                const Icon = opt.icon;
+                const active = theme === opt.value;
                 return (
                   <button
-                    key={option.value}
-                    onClick={() => setTheme(option.value)}
-                    className={`flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 transition-all ${
-                      isActive
+                    key={opt.value}
+                    onClick={() => setTheme(opt.value)}
+                    className={`flex items-center justify-center px-4 py-3 rounded-lg border-2 transition-all ${
+                      active
                         ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10 text-[var(--color-primary)]'
                         : 'border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-primary)]/50'
-                    }`}
+                    } ${active ? 'gap-2' : 'gap-3'}`}
                   >
                     <Icon className="w-5 h-5" />
-                    <span className="font-medium">{option.label}</span>
+                    <span className="font-medium">{opt.label}</span>
                   </button>
                 );
               })}
@@ -76,30 +77,30 @@ const SettingsPage = () => {
         <div className="bg-[var(--color-bg-secondary)] rounded-xl shadow-sm p-6 border border-[var(--color-border)]">
           <h2 className="text-lg font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
             <Globe className="w-5 h-5" />
-            {t('languageRegion')}
+            {t('languageRegion') || 'Language'}
           </h2>
           <div className="space-y-3">
             <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-2">
-              {t('selectLanguage')}
+              {t('selectLanguage') || 'Select language'}
             </label>
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={() => setLanguage('vi')}
-                className={`flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 transition-all ${
+                className={`flex items-center justify-center px-4 py-3 rounded-lg border-2 transition ${
                   language === 'vi'
                     ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10 text-[var(--color-primary)]'
                     : 'border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-primary)]/50'
-                }`}
+                } ${language === 'vi' ? 'gap-2' : 'gap-3'}`}
               >
                 <span className="font-medium">Tiếng Việt</span>
               </button>
               <button
                 onClick={() => setLanguage('en')}
-                className={`flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 transition-all ${
+                className={`flex items-center justify-center px-4 py-3 rounded-lg border-2 transition ${
                   language === 'en'
                     ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10 text-[var(--color-primary)]'
                     : 'border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-primary)]/50'
-                }`}
+                } ${language === 'en' ? 'gap-2' : 'gap-3'}`}
               >
                 <span className="font-medium">English</span>
               </button>

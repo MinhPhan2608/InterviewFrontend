@@ -13,17 +13,13 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-export const AuthProvider = ({ children }: AuthProviderProps) => {
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  // Check for existing auth on mount
+  // Restore session from localStorage on app load
   useEffect(() => {
     const storedUser = authService.getUser();
     if (storedUser && authService.isAuthenticated()) {
@@ -53,7 +49,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const logout = () => {
     setIsLoggingOut(true);
-    // Add fade out animation before clearing auth
+    // Brief animation before wiping state - feels better than instant logout
     setTimeout(() => {
       authService.logout();
       setUser(null);
