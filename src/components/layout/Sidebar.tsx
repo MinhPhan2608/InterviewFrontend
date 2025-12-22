@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts';
+import { useAuth, useLanguage } from '@/contexts';
 import {
   LayoutDashboard,
   Search,
@@ -14,7 +14,9 @@ import { useState } from 'react';
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const { logout, user } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -23,12 +25,14 @@ const Sidebar = () => {
   };
 
   const navItems = [
-    { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { to: '/search', icon: Search, label: 'Search Scores' },
-    { to: '/reports', icon: BarChart3, label: 'Reports' },
-    { to: '/top10', icon: Trophy, label: 'Top 10 Group A' },
-    { to: '/settings', icon: Settings, label: 'Settings' },
+    { to: '/dashboard', icon: LayoutDashboard, labelKey: 'dashboard' as const },
+    { to: '/search', icon: Search, labelKey: 'searchScores' as const },
+    { to: '/reports', icon: BarChart3, labelKey: 'reports' as const },
+    { to: '/top10', icon: Trophy, labelKey: 'top10GroupA' as const },
+    { to: '/settings', icon: Settings, labelKey: 'settings' as const },
   ];
+
+  const isExpanded = isOpen || isHovered;
 
   const NavLinks = () => (
     <>
@@ -38,15 +42,19 @@ const Sidebar = () => {
           to={item.to}
           onClick={() => setIsOpen(false)}
           className={({ isActive }) =>
-            `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+            `flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
               isActive
-                ? 'bg-yellow-400 text-gray-900 font-semibold'
-                : 'text-gray-700 hover:bg-yellow-100'
+                ? 'bg-[var(--color-sidebar-active)] text-white font-medium'
+                : 'text-[var(--color-sidebar-text)] hover:bg-[var(--color-sidebar-hover)]'
             }`
           }
         >
-          <item.icon className="w-5 h-5" />
-          <span>{item.label}</span>
+          <item.icon className="w-5 h-5 flex-shrink-0" />
+          <span className={`whitespace-nowrap transition-all duration-200 ${
+            isExpanded ? 'opacity-100 w-auto' : 'lg:opacity-0 lg:w-0 lg:overflow-hidden'
+          }`}>
+            {t(item.labelKey)}
+          </span>
         </NavLink>
       ))}
     </>
@@ -57,7 +65,7 @@ const Sidebar = () => {
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-yellow-400 rounded-lg shadow-lg"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-[var(--color-primary)] text-white rounded-lg shadow-lg"
       >
         {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
       </button>
@@ -72,38 +80,59 @@ const Sidebar = () => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-gradient-to-b from-yellow-400 to-yellow-500 transform transition-transform duration-300 lg:transform-none ${
-          isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-        }`}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className={`fixed inset-y-0 left-0 z-40 bg-[var(--color-sidebar-bg)] shadow-xl transition-all duration-300 ease-in-out ${
+          isOpen ? 'translate-x-0 w-64' : '-translate-x-full lg:translate-x-0'
+        } ${isHovered ? 'lg:w-64' : 'lg:w-16'}`}
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="p-6 border-b border-yellow-600/20">
-            <h2 className="text-xl font-bold text-gray-900">Menu</h2>
+          <div className="p-4 border-b border-[var(--color-sidebar-hover)] flex items-center gap-3">
+            <div className="w-8 h-8 bg-[var(--color-primary)] rounded-lg flex items-center justify-center flex-shrink-0">
+              <span className="text-white font-bold text-sm">G</span>
+            </div>
+            <span className={`font-bold text-[var(--color-sidebar-text)] whitespace-nowrap transition-all duration-200 ${
+              isExpanded ? 'opacity-100 w-auto' : 'lg:opacity-0 lg:w-0 lg:overflow-hidden'
+            }`}>
+              {t('menu')}
+            </span>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+          <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
             <NavLinks />
           </nav>
 
           {/* User Section */}
-          <div className="p-4 border-t border-yellow-600/20">
-            <div className="flex items-center gap-3 mb-4 px-4">
-              <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-white font-semibold">
+          <div className="p-3 border-t border-[var(--color-sidebar-hover)]">
+            <div className={`flex items-center gap-3 mb-3 px-2 transition-all duration-200 ${
+              isExpanded ? '' : 'lg:justify-center'
+            }`}>
+              <div className="w-9 h-9 bg-[var(--color-primary)] rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
                 {user?.username?.charAt(0).toUpperCase() || 'U'}
               </div>
-              <div>
-                <p className="font-semibold text-gray-900">{user?.username || 'User'}</p>
-                <p className="text-sm text-gray-700">Administrator</p>
+              <div className={`transition-all duration-200 ${
+                isExpanded ? 'opacity-100 w-auto' : 'lg:opacity-0 lg:w-0 lg:overflow-hidden'
+              }`}>
+                <p className="font-medium text-[var(--color-sidebar-text)] text-sm truncate">
+                  {user?.username || 'User'}
+                </p>
+                <p className="text-xs text-[var(--color-text-muted)]">{t('administrator')}</p>
               </div>
             </div>
             <button
               onClick={handleLogout}
-              className="flex items-center gap-3 w-full px-4 py-3 text-red-700 hover:bg-red-100 rounded-lg transition-colors"
+              className={`flex items-center gap-3 w-full px-3 py-2.5 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors ${
+                isExpanded ? '' : 'lg:justify-center'
+              }`}
             >
-              <LogOut className="w-5 h-5" />
-              <span>Logout</span>
+              <LogOut className="w-5 h-5 flex-shrink-0" />
+              <span className={`transition-all duration-200 ${
+                isExpanded ? 'opacity-100 w-auto' : 'lg:opacity-0 lg:w-0 lg:overflow-hidden'
+              }`}>
+                {t('logout')}
+              </span>
             </button>
           </div>
         </div>

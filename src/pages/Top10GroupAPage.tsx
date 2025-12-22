@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Loader2, Trophy, RefreshCw, Medal } from 'lucide-react';
 import { useTop10GroupA } from '@/hooks';
+import { useLanguage } from '@/contexts';
 
 // Helper to format score value
 const formatScore = (value: number | null): string => {
@@ -16,6 +17,7 @@ const calculateTotal = (math: number | null, physics: number | null, chemistry: 
 
 const Top10GroupAPage = () => {
   const { students, isLoading, error, fetchTop10 } = useTop10GroupA();
+  const { t } = useLanguage();
 
   useEffect(() => {
     fetchTop10();
@@ -25,13 +27,13 @@ const Top10GroupAPage = () => {
   const getMedalStyle = (rank: number) => {
     switch (rank) {
       case 1:
-        return 'bg-yellow-400 text-yellow-900';
+        return 'bg-[var(--color-accent)] text-white';
       case 2:
-        return 'bg-gray-300 text-gray-700';
+        return 'bg-gray-400 text-white';
       case 3:
-        return 'bg-orange-400 text-orange-900';
+        return 'bg-orange-400 text-white';
       default:
-        return 'bg-blue-100 text-blue-700';
+        return 'bg-[var(--color-primary)]/20 text-[var(--color-primary)]';
     }
   };
 
@@ -39,13 +41,13 @@ const Top10GroupAPage = () => {
   const getRowStyle = (rank: number) => {
     switch (rank) {
       case 1:
-        return 'bg-yellow-50 border-l-4 border-yellow-400';
+        return 'bg-[var(--color-accent)]/10 border-l-4 border-[var(--color-accent)]';
       case 2:
-        return 'bg-gray-50 border-l-4 border-gray-300';
+        return 'bg-gray-100 dark:bg-gray-700/30 border-l-4 border-gray-400';
       case 3:
-        return 'bg-orange-50 border-l-4 border-orange-400';
+        return 'bg-orange-50 dark:bg-orange-900/10 border-l-4 border-orange-400';
       default:
-        return 'bg-white border-l-4 border-transparent';
+        return 'bg-[var(--color-bg-secondary)] border-l-4 border-transparent';
     }
   };
 
@@ -53,8 +55,8 @@ const Top10GroupAPage = () => {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading top students...</p>
+          <Loader2 className="w-12 h-12 animate-spin text-[var(--color-primary)] mx-auto mb-4" />
+          <p className="text-[var(--color-text-secondary)]">{t('loadingTopStudents')}</p>
         </div>
       </div>
     );
@@ -62,14 +64,14 @@ const Top10GroupAPage = () => {
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
-        <p className="text-red-700 mb-4">{error}</p>
+      <div className="bg-[var(--color-danger)]/10 border border-[var(--color-danger)]/20 rounded-xl p-6 text-center">
+        <p className="text-[var(--color-danger)] mb-4">{error}</p>
         <button
           onClick={fetchTop10}
-          className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2 mx-auto"
+          className="px-4 py-2 bg-[var(--color-danger)] text-white rounded-lg hover:opacity-90 transition-colors flex items-center gap-2 mx-auto"
         >
           <RefreshCw className="w-4 h-4" />
-          Try Again
+          {t('tryAgain')}
         </button>
       </div>
     );
@@ -80,82 +82,79 @@ const Top10GroupAPage = () => {
       {/* Page Title */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Trophy className="w-7 h-7 text-yellow-500" />
-            Top 10 Group A Students
+          <h1 className="text-2xl font-bold text-[var(--color-text-primary)] flex items-center gap-2">
+            <Trophy className="w-7 h-7 text-[var(--color-accent)]" />
+            {t('top10Title')}
           </h1>
-          <p className="text-gray-600 mt-1">
-            Highest combined scores in Math, Physics, and Chemistry
+          <p className="text-[var(--color-text-secondary)] mt-1">
+            {t('highestCombinedScores')}
           </p>
         </div>
         <button
           onClick={fetchTop10}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+          className="px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg hover:opacity-90 transition-colors flex items-center gap-2"
         >
           <RefreshCw className="w-4 h-4" />
-          Refresh
+          {t('refresh')}
         </button>
       </div>
 
       {/* Info Card */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-6 text-white">
-        <h2 className="text-lg font-semibold mb-2">Group A Subjects</h2>
+      <div className="bg-[var(--color-primary)] rounded-xl p-6 text-white">
+        <h2 className="text-lg font-semibold mb-4">{t('groupASubjects')}</h2>
         <div className="grid grid-cols-3 gap-4">
-          <div className="bg-white/10 rounded-lg p-4 text-center">
-            <p className="text-2xl font-bold">🔢</p>
-            <p className="text-sm mt-1">Mathematics (Toán)</p>
+          <div className="bg-white/10 rounded-lg p-3 text-center">
+            <p className="font-semibold">{t('math')}</p>
           </div>
-          <div className="bg-white/10 rounded-lg p-4 text-center">
-            <p className="text-2xl font-bold">⚛️</p>
-            <p className="text-sm mt-1">Physics (Vật Lý)</p>
+          <div className="bg-white/10 rounded-lg p-3 text-center">
+            <p className="font-semibold">{t('physics')}</p>
           </div>
-          <div className="bg-white/10 rounded-lg p-4 text-center">
-            <p className="text-2xl font-bold">🧪</p>
-            <p className="text-sm mt-1">Chemistry (Hóa Học)</p>
+          <div className="bg-white/10 rounded-lg p-3 text-center">
+            <p className="font-semibold">{t('chemistry')}</p>
           </div>
         </div>
       </div>
 
       {/* Leaderboard */}
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-gray-100 bg-gradient-to-r from-yellow-50 to-orange-50">
-          <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-            <Medal className="w-5 h-5 text-yellow-600" />
-            Leaderboard
+      <div className="bg-[var(--color-bg-secondary)] rounded-xl shadow-sm overflow-hidden border border-[var(--color-border)]">
+        <div className="p-6 border-b border-[var(--color-border)]">
+          <h2 className="text-lg font-semibold text-[var(--color-text-primary)] flex items-center gap-2">
+            <Medal className="w-5 h-5 text-[var(--color-accent)]" />
+            {t('leaderboard')}
           </h2>
         </div>
 
         {/* Desktop Table */}
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-[var(--color-bg-tertiary)]">
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Rank
+                <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider">
+                  {t('rank')}
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Registration No.
+                <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider">
+                  {t('registrationNo')}
                 </th>
-                <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Math
+                <th className="px-6 py-4 text-center text-xs font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider">
+                  {t('math')}
                 </th>
-                <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Physics
+                <th className="px-6 py-4 text-center text-xs font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider">
+                  {t('physics')}
                 </th>
-                <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Chemistry
+                <th className="px-6 py-4 text-center text-xs font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider">
+                  {t('chemistry')}
                 </th>
-                <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Total Score
+                <th className="px-6 py-4 text-center text-xs font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider">
+                  {t('totalScore')}
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-[var(--color-border)]">
               {students.map((student, index) => {
                 const rank = index + 1;
                 const total = calculateTotal(student.math, student.physics, student.chemistry);
                 return (
-                  <tr key={student.registrationNumber} className={`${getRowStyle(rank)} hover:bg-gray-50 transition-colors`}>
+                  <tr key={student.registrationNumber} className={`${getRowStyle(rank)} hover:bg-[var(--color-bg-tertiary)] transition-colors`}>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
                         className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm ${getMedalStyle(rank)}`}
@@ -163,20 +162,20 @@ const Top10GroupAPage = () => {
                         {rank}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap font-medium text-[var(--color-text-primary)]">
                       {student.registrationNumber}
                     </td>
-                    <td className="px-6 py-4 text-center text-gray-700 font-medium">
+                    <td className="px-6 py-4 text-center text-[var(--color-text-secondary)] font-medium">
                       {formatScore(student.math)}
                     </td>
-                    <td className="px-6 py-4 text-center text-gray-700 font-medium">
+                    <td className="px-6 py-4 text-center text-[var(--color-text-secondary)] font-medium">
                       {formatScore(student.physics)}
                     </td>
-                    <td className="px-6 py-4 text-center text-gray-700 font-medium">
+                    <td className="px-6 py-4 text-center text-[var(--color-text-secondary)] font-medium">
                       {formatScore(student.chemistry)}
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <span className="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-800 font-bold">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full bg-[var(--color-success)]/20 text-[var(--color-success)] font-bold">
                         {total}
                       </span>
                     </td>
@@ -188,7 +187,7 @@ const Top10GroupAPage = () => {
         </div>
 
         {/* Mobile Cards */}
-        <div className="md:hidden divide-y divide-gray-100">
+        <div className="md:hidden divide-y divide-[var(--color-border)]">
           {students.map((student, index) => {
             const rank = index + 1;
             const total = calculateTotal(student.math, student.physics, student.chemistry);
@@ -202,26 +201,26 @@ const Top10GroupAPage = () => {
                       {rank}
                     </span>
                     <div>
-                      <p className="font-bold text-gray-900">{student.registrationNumber}</p>
-                      <p className="text-sm text-gray-500">Registration No.</p>
+                      <p className="font-bold text-[var(--color-text-primary)]">{student.registrationNumber}</p>
+                      <p className="text-sm text-[var(--color-text-muted)]">{t('registrationNo')}</p>
                     </div>
                   </div>
-                  <span className="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-800 font-bold text-lg">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full bg-[var(--color-success)]/20 text-[var(--color-success)] font-bold text-lg">
                     {total}
                   </span>
                 </div>
                 <div className="grid grid-cols-3 gap-2 text-center">
-                  <div className="bg-gray-50 rounded-lg p-2">
-                    <p className="text-xs text-gray-500">Math</p>
-                    <p className="font-semibold text-gray-900">{formatScore(student.math)}</p>
+                  <div className="bg-[var(--color-bg-tertiary)] rounded-lg p-2">
+                    <p className="text-xs text-[var(--color-text-muted)]">{t('math')}</p>
+                    <p className="font-semibold text-[var(--color-text-primary)]">{formatScore(student.math)}</p>
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-2">
-                    <p className="text-xs text-gray-500">Physics</p>
-                    <p className="font-semibold text-gray-900">{formatScore(student.physics)}</p>
+                  <div className="bg-[var(--color-bg-tertiary)] rounded-lg p-2">
+                    <p className="text-xs text-[var(--color-text-muted)]">{t('physics')}</p>
+                    <p className="font-semibold text-[var(--color-text-primary)]">{formatScore(student.physics)}</p>
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-2">
-                    <p className="text-xs text-gray-500">Chemistry</p>
-                    <p className="font-semibold text-gray-900">{formatScore(student.chemistry)}</p>
+                  <div className="bg-[var(--color-bg-tertiary)] rounded-lg p-2">
+                    <p className="text-xs text-[var(--color-text-muted)]">{t('chemistry')}</p>
+                    <p className="font-semibold text-[var(--color-text-primary)]">{formatScore(student.chemistry)}</p>
                   </div>
                 </div>
               </div>
@@ -232,11 +231,11 @@ const Top10GroupAPage = () => {
 
       {/* Empty State */}
       {students.length === 0 && (
-        <div className="bg-white rounded-xl shadow-sm p-12 text-center">
-          <Trophy className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No Data Available</h3>
-          <p className="text-gray-500">
-            Unable to load top 10 students data. Please try again later.
+        <div className="bg-[var(--color-bg-secondary)] rounded-xl shadow-sm p-12 text-center border border-[var(--color-border)]">
+          <Trophy className="w-12 h-12 text-[var(--color-text-muted)] mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-[var(--color-text-primary)] mb-2">{t('noDataAvailable')}</h3>
+          <p className="text-[var(--color-text-secondary)]">
+            {t('unableToLoadTop10')}
           </p>
         </div>
       )}

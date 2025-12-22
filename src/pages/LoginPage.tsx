@@ -1,6 +1,6 @@
 import { useState, type FormEvent, type ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts';
+import { useAuth, useLanguage } from '@/contexts';
 import { Eye, EyeOff, LogIn, Loader2 } from 'lucide-react';
 
 interface FormErrors {
@@ -17,21 +17,22 @@ const LoginPage = () => {
   
   const { login, isLoading } = useAuth();
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   // Validate form fields
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
     if (!username.trim()) {
-      newErrors.username = 'Username is required';
+      newErrors.username = t('usernameRequired');
     } else if (username.length < 3) {
-      newErrors.username = 'Username must be at least 3 characters';
+      newErrors.username = t('usernameMinLength');
     }
 
     if (!password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = t('passwordRequired');
     } else if (password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+      newErrors.password = t('passwordMinLength');
     }
 
     setErrors(newErrors);
@@ -50,7 +51,7 @@ const LoginPage = () => {
       await login({ username, password });
       navigate('/dashboard');
     } catch {
-      setApiError('Invalid username or password. Please try again.');
+      setApiError(t('invalidCredentials'));
     }
   };
 
@@ -69,23 +70,23 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[var(--color-primary)] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo/Title */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">G-Scores</h1>
-          <p className="text-blue-200">Vietnamese High School Exam Score Lookup</p>
+          <p className="text-white/80">Vietnamese High School Exam Score Lookup</p>
         </div>
 
         {/* Login Form Card */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
-          <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">
-            Welcome Back
+        <div className="bg-[var(--color-bg-secondary)] rounded-2xl shadow-2xl p-8">
+          <h2 className="text-2xl font-bold text-[var(--color-text-primary)] text-center mb-6">
+            {t('welcomeBack')}
           </h2>
 
           {/* API Error Alert */}
           {apiError && (
-            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+            <div className="mb-4 p-4 bg-[var(--color-danger)]/10 border border-[var(--color-danger)]/20 rounded-lg text-[var(--color-danger)] text-sm">
               {apiError}
             </div>
           )}
@@ -95,25 +96,25 @@ const LoginPage = () => {
             <div>
               <label 
                 htmlFor="username" 
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1"
               >
-                Username
+                {t('username')}
               </label>
               <input
                 type="text"
                 id="username"
                 value={username}
                 onChange={handleUsernameChange}
-                placeholder="Enter your username"
-                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
+                placeholder={t('enterUsername')}
+                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors bg-[var(--color-bg-primary)] text-[var(--color-text-primary)] ${
                   errors.username
-                    ? 'border-red-300 focus:ring-red-500 bg-red-50'
-                    : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
+                    ? 'border-[var(--color-danger)] focus:ring-[var(--color-danger)] bg-[var(--color-danger)]/5'
+                    : 'border-[var(--color-border)] focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]'
                 }`}
                 disabled={isLoading}
               />
               {errors.username && (
-                <p className="mt-1 text-sm text-red-600">{errors.username}</p>
+                <p className="mt-1 text-sm text-[var(--color-danger)]">{errors.username}</p>
               )}
             </div>
 
@@ -121,9 +122,9 @@ const LoginPage = () => {
             <div>
               <label 
                 htmlFor="password" 
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1"
               >
-                Password
+                {t('password')}
               </label>
               <div className="relative">
                 <input
@@ -131,18 +132,18 @@ const LoginPage = () => {
                   id="password"
                   value={password}
                   onChange={handlePasswordChange}
-                  placeholder="Enter your password"
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors pr-12 ${
+                  placeholder={t('enterPassword')}
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors pr-12 bg-[var(--color-bg-primary)] text-[var(--color-text-primary)] ${
                     errors.password
-                      ? 'border-red-300 focus:ring-red-500 bg-red-50'
-                      : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
+                      ? 'border-[var(--color-danger)] focus:ring-[var(--color-danger)] bg-[var(--color-danger)]/5'
+                      : 'border-[var(--color-border)] focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]'
                   }`}
                   disabled={isLoading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
                   tabIndex={-1}
                 >
                   {showPassword ? (
@@ -153,7 +154,7 @@ const LoginPage = () => {
                 </button>
               </div>
               {errors.password && (
-                <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+                <p className="mt-1 text-sm text-[var(--color-danger)]">{errors.password}</p>
               )}
             </div>
 
@@ -161,36 +162,36 @@ const LoginPage = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+              className="w-full bg-[var(--color-primary)] hover:opacity-90 disabled:opacity-50 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  Signing in...
+                  {t('signingIn')}
                 </>
               ) : (
                 <>
                   <LogIn className="w-5 h-5" />
-                  Sign In
+                  {t('signIn')}
                 </>
               )}
             </button>
           </form>
 
           {/* Demo Credentials Hint */}
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <p className="text-sm text-blue-800 font-medium mb-1">Demo Credentials:</p>
-            <p className="text-sm text-blue-600">
-              Username: <span className="font-mono bg-blue-100 px-1 rounded">test</span>
+          <div className="mt-6 p-4 bg-[var(--color-primary)]/10 rounded-lg">
+            <p className="text-sm text-[var(--color-primary)] font-medium mb-1">{t('demoCredentials')}</p>
+            <p className="text-sm text-[var(--color-text-secondary)]">
+              {t('username')}: <span className="font-mono bg-[var(--color-bg-tertiary)] px-1 rounded">test</span>
             </p>
-            <p className="text-sm text-blue-600">
-              Password: <span className="font-mono bg-blue-100 px-1 rounded">test123</span>
+            <p className="text-sm text-[var(--color-text-secondary)]">
+              {t('password')}: <span className="font-mono bg-[var(--color-bg-tertiary)] px-1 rounded">test123</span>
             </p>
           </div>
         </div>
 
         {/* Footer */}
-        <p className="text-center text-blue-200 text-sm mt-6">
+        <p className="text-center text-white/70 text-sm mt-6">
           © 2024 G-Scores. Golden Owl Solutions.
         </p>
       </div>

@@ -105,7 +105,7 @@ const translations = {
     themeSettings: 'Theme Settings',
     lightMode: 'Light Mode',
     darkMode: 'Dark Mode',
-    languageRegion: 'Language & Region',
+    languageRegion: 'Language',
     selectLanguage: 'Language',
   },
   vi: {
