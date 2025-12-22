@@ -22,13 +22,10 @@ export const useScoreSearch = () => {
       const result = await scoreService.getScoreByRegNumber(regNum);
       setScore(result);
     } catch (err: unknown) {
+      // Extract message from API response
       if (err && typeof err === 'object' && 'response' in err) {
-        const axiosError = err as { response?: { status: number } };
-        if (axiosError.response?.status === 404) {
-          setError('No student found with this registration number');
-        } else {
-          setError('Failed to fetch score. Please try again.');
-        }
+        const axiosError = err as { response?: { data?: { message?: string } } };
+        setError(axiosError.response?.data?.message || 'Failed to fetch score. Please try again.');
       } else if (err instanceof Error) {
         setError(err.message);
       } else {
