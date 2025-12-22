@@ -43,7 +43,7 @@ const SearchScoresPage = () => {
     if (value >= 8) return 'text-[var(--color-success)]';
     if (value >= 6) return 'text-[var(--color-info)]';
     if (value >= 4) return 'text-[var(--color-warning)]';
-    return 'text-[var(--color-danger)]';
+    return 'text-[var(--color-error)]';
   };
 
   // Get score background based on value
@@ -52,7 +52,7 @@ const SearchScoresPage = () => {
     if (value >= 8) return 'bg-[var(--color-success)]/10';
     if (value >= 6) return 'bg-[var(--color-info)]/10';
     if (value >= 4) return 'bg-[var(--color-warning)]/10';
-    return 'bg-[var(--color-danger)]/10';
+    return 'bg-[var(--color-error)]/10';
   };
 
   return (
