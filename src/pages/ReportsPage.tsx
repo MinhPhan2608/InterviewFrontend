@@ -79,9 +79,10 @@ const ReportsPage = () => {
       <div className="bg-[var(--color-danger)]/10 border border-[var(--color-danger)]/20 rounded-xl p-6 text-center">
         <p className="text-[var(--color-danger)] mb-4">{error}</p>
         <button
-          onClick={fetchStatistics}
+          onClick={() => fetchStatistics()}
           className="px-4 py-2 bg-[var(--color-danger)] text-white rounded-lg hover:opacity-90 transition-colors flex items-center gap-2 mx-auto"
         >
+          {t('tryAgain')}
         </button>
       </div>
     );

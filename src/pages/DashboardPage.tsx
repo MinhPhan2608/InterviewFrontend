@@ -139,6 +139,8 @@ const DashboardPage = () => {
             </div>
           </div>
         </div>
+          </>
+        )}
       </div>
 
       {/* Quick Links */}
