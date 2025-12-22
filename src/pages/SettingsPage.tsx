@@ -91,7 +91,6 @@ const SettingsPage = () => {
                     : 'border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-primary)]/50'
                 }`}
               >
-                <span className="text-xl">🇻🇳</span>
                 <span className="font-medium">Tiếng Việt</span>
               </button>
               <button
@@ -102,7 +101,6 @@ const SettingsPage = () => {
                     : 'border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-primary)]/50'
                 }`}
               >
-                <span className="text-xl">🇺🇸</span>
                 <span className="font-medium">English</span>
               </button>
             </div>

@@ -41,13 +41,13 @@ const Top10GroupAPage = () => {
   const getRowStyle = (rank: number) => {
     switch (rank) {
       case 1:
-        return 'bg-[var(--color-accent)]/10 border-l-4 border-[var(--color-accent)]';
+        return 'border-l-4 border-[var(--color-accent)]';
       case 2:
-        return 'bg-gray-100 dark:bg-gray-700/30 border-l-4 border-gray-400';
+        return 'border-l-4 border-gray-400';
       case 3:
-        return 'bg-orange-50 dark:bg-orange-900/10 border-l-4 border-orange-400';
+        return 'border-l-4 border-orange-400';
       default:
-        return 'bg-[var(--color-bg-secondary)] border-l-4 border-transparent';
+        return 'border-l-4 border-transparent';
     }
   };
 
@@ -94,8 +94,6 @@ const Top10GroupAPage = () => {
           onClick={fetchTop10}
           className="px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg hover:opacity-90 transition-colors flex items-center gap-2"
         >
-          <RefreshCw className="w-4 h-4" />
-          {t('refresh')}
         </button>
       </div>
 

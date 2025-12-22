@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Loader2, BarChart3, RefreshCw } from 'lucide-react';
+import { Loader2, BarChart3 } from 'lucide-react';
 import {
   BarChart,
   Bar,
@@ -40,7 +40,7 @@ const ReportsPage = () => {
     { key: 'group1', label: t('excellent'), color: 'var(--color-success)', bgClass: 'bg-[var(--color-success)]' },
     { key: 'group2', label: t('good'), color: 'var(--color-info)', bgClass: 'bg-[var(--color-info)]' },
     { key: 'group3', label: t('average'), color: 'var(--color-warning)', bgClass: 'bg-[var(--color-warning)]' },
-    { key: 'group4', label: t('poor'), color: 'var(--color-danger)', bgClass: 'bg-[var(--color-danger)]' },
+    { key: 'group4', label: t('poor'), color: 'var(--color-error)', bgClass: 'bg-[var(--color-error)]' },
   ];
 
   // Transform data for charts
@@ -82,8 +82,6 @@ const ReportsPage = () => {
           onClick={fetchStatistics}
           className="px-4 py-2 bg-[var(--color-danger)] text-white rounded-lg hover:opacity-90 transition-colors flex items-center gap-2 mx-auto"
         >
-          <RefreshCw className="w-4 h-4" />
-          {t('tryAgain')}
         </button>
       </div>
     );
@@ -92,18 +90,9 @@ const ReportsPage = () => {
   return (
     <div className="space-y-6">
       {/* Page Title */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">{t('scoreReports')}</h1>
-          <p className="text-[var(--color-text-secondary)] mt-1">{t('statisticsOfScores')}</p>
-        </div>
-        <button
-          onClick={fetchStatistics}
-          className="px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg hover:opacity-90 transition-colors flex items-center gap-2"
-        >
-          <RefreshCw className="w-4 h-4" />
-          {t('refresh')}
-        </button>
+      <div>
+        <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">{t('scoreReports')}</h1>
+        <p className="text-[var(--color-text-secondary)] mt-1">{t('statisticsOfScores')}</p>
       </div>
 
       {/* Summary Cards */}
